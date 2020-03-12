@@ -15,10 +15,17 @@
 <body>
 <v-app id="app">
     <v-container>
+        <v-row>
+            <v-alert dense type="success" v-show="alert == 1">登入成功</v-alert>
+            <v-alert dense type="error" v-show="alert == 2">請確認密碼無誤</v-alert>
+            <v-alert dense type="success" v-show="alert == 3">新會員註冊成功</v-alert>
+            <v-alert dense type="error" v-show="alert == 4">帳號已被使用</v-alert>
+            <v-alert dense type="info" v-show="alert == 5">密碼已修改</v-alert>
+        </v-row>
         <v-row align="center">
             <v-form>
                 <v-row>
-                    <v-text-field label="Account" name="account" v-model="account"></v-text-field>
+                    <v-text-field label="Account" name="account" v-model="account" required></v-text-field>
                 </v-row>
                 <v-row>
                     <v-text-field label="Password" type="password" name="password" v-model="password"></v-text-field>
@@ -26,8 +33,6 @@
                 <v-row>
                     <v-btn outlined color="success" @click="submit">submit</v-btn>
                     <v-btn outlined color="primary" @click="register">register</v-btn>
-                    <v-btn outlined color="error" @click="remove">delete</v-btn>
-                    <v-btn outlined color="warning" @click="change">change</v-btn>
                 </v-row>
             </v-form>
             <v-row justify="space-around">
@@ -35,6 +40,31 @@
                 {{ result }}
             </v-row>
         </v-row>
+        <v-card class="mx-auto" max-width="500">
+            <v-list dense>
+                <v-subheader>User List</v-subheader>
+                <v-list-item-group v-model="user" color="primary">
+                    <v-list-item v-for="(user, i) in users" :key="i">
+                        <v-list-item-icon>
+                            <v-icon>mdi-account</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-content>
+                            <v-list-item-title v-text="user.Account"></v-list-item-title>
+                        </v-list-item-content>
+                        <v-list-item-action>
+                            <v-btn icon @click="change(user)">
+                                <v-icon color="orange lighten-1">mdi-pencil</v-icon>
+                            </v-btn>
+                        </v-list-item-action>
+                        <v-list-item-action>
+                            <v-btn icon @click="remove(user)">
+                                <v-icon color="error lighten-1">mdi-close</v-icon>
+                            </v-btn>
+                        </v-list-item-action>
+                    </v-list-item>
+                </v-list-item-group>
+            </v-list>
+        </v-card>
     </v-container>
 </v-app>
 </body>
@@ -49,9 +79,12 @@
         vuetify: new Vuetify(),
         data() {
             return {
+                user: {},
+                users: {},
                 account: "",
                 password: "",
-                result: ""
+                result: "",
+                alert: 0
             }
         },
         methods: {
@@ -60,9 +93,14 @@
                     account: this.account,
                     password: this.password,
                 };
-                axios.get(DOMAIN + "/v1/user/login", para).then(res => {
+                axios.get(DOMAIN + "/v1/user/login", {
+                    params: para
+                }).then(res => {
                     this.result = res.data;
+                    this.alert = 1;
                 }).catch(err => {
+                    this.alert = 2;
+                    // this.alert.text = err.response.data.Message;
                     this.result = err.response.data;
                 })
             },
@@ -71,27 +109,48 @@
                     account: this.account,
                     password: this.password,
                 };
+
                 axios.post(DOMAIN + "/v1/user/create", para).then(res => {
                     this.result = res.data;
+                    if (res.data.Result.IsOK == true) {
+                        this.alert = 3
+                    } else {
+                        this.alert = 4
+                    }
+
+                    this.refreshUserList();
                 })
             },
-            remove() {
+            remove(user) {
                 let para = {
-                    account: this.account,
+                    account: user.Account
                 };
                 axios.post(DOMAIN + "/v1/user/delete", para).then(res => {
                     this.result = res.data;
+                    this.refreshUserList();
                 })
             },
-            change() {
+            change(user) {
+                let password = prompt("" + user.Account + "的新密碼為？");
                 let para = {
-                    account: this.account,
-                    password: this.password,
+                    account: user.Account,
+                    password: password,
                 };
+
                 axios.post(DOMAIN + "/v1/user/pwd/change", para).then(res => {
                     this.result = res.data;
+                    this.alert = 5;
+                    this.refreshUserList();
+                })
+            },
+            refreshUserList() {
+                axios.get(DOMAIN + "/v1/users").then(res => {
+                    this.users = res.data
                 })
             }
+        },
+        mounted() {
+            this.refreshUserList();
         }
     })
 

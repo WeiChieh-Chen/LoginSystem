@@ -17,7 +17,7 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	var user User
 	var res Response
-
+	// 走 OPTIONS 等方式時，從 Payload 取得資料用下方程式碼
 	_ = json.NewDecoder(r.Body).Decode(&user)
 
 	if r.URL.Path == "/v1/user/create" {
@@ -31,7 +31,6 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Path == "/v1/user/delete" {
-
 		res.Result.IsOK = UserList.Remove(user)
 
 		_ = json.NewEncoder(w).Encode(res)
@@ -52,6 +51,7 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Path == "/v1/user/login" {
+		// 以 GET 的方式取資料時，則是使用下方程式碼
 		vars := r.URL.Query()
 		user := User{
 			Account:  vars.Get("account"),
@@ -68,6 +68,7 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// 列出目前擁有的使用者
 	if r.URL.Path == "/v1/users" {
 		_ = json.NewEncoder(w).Encode(UserList)
 		return
