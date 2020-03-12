@@ -26,6 +26,8 @@
                 <v-row>
                     <v-btn outlined color="success" @click="submit">submit</v-btn>
                     <v-btn outlined color="primary" @click="register">register</v-btn>
+                    <v-btn outlined color="error" @click="remove">delete</v-btn>
+                    <v-btn outlined color="warning" @click="change">change</v-btn>
                 </v-row>
             </v-form>
             <v-row justify="space-around">
@@ -54,16 +56,27 @@
         },
         methods: {
             submit() {
-                alert(1)
+
             },
             register() {
-                let credential = {
+                let para = {
                     account: this.account,
                     password: this.password,
                 };
-                axios.post(DOMAIN + "/v1/user/create", credential).then(res => {
+                axios.post(DOMAIN + "/v1/user/create", para).then(res => {
                     this.result = res.data;
                 })
+            },
+            remove() {
+                let para = {
+                    account: this.account,
+                };
+                axios.post(DOMAIN + "/v1/user/delete", para).then(res => {
+                    this.result = res.data;
+                })
+            },
+            change() {
+
             }
         }
     })

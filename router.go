@@ -35,8 +35,13 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if r.URL.Path == " /v1/user/delete" {
-		res.Result.IsOK = true
+	if r.URL.Path == "/v1/user/delete" {
+		if UserList.Remove(user) {
+			res.Result.IsOK = true
+		} else {
+			res.Result.IsOK = false
+		}
+
 		if err := json.NewEncoder(w).Encode(res); err != nil {
 			return
 		}
