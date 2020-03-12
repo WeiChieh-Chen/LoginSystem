@@ -56,7 +56,15 @@
         },
         methods: {
             submit() {
-
+                let para = {
+                    account: this.account,
+                    password: this.password,
+                };
+                axios.get(DOMAIN + "/v1/user/login", para).then(res => {
+                    this.result = res.data;
+                }).catch(err => {
+                    this.result = err.response.data;
+                })
             },
             register() {
                 let para = {

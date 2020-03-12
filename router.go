@@ -17,10 +17,8 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	var user User
 	var res Response
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
-		// EOF 可以不處理
-		return
-	}
+
+	_ = json.NewDecoder(r.Body).Decode(&user)
 
 	if r.URL.Path == "/v1/user/create" {
 		if UserList.Add(user) {
@@ -68,6 +66,15 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Path == "/v1/user/login" {
+		if !UserList.Login(user) {
+			res.Code = 2
+			res.Message = "Login Failed"
+			w.WriteHeader(400)
+		}
+
+		if err := json.NewEncoder(w).Encode(res); err != nil {
+			return
+		}
 		return
 	}
 

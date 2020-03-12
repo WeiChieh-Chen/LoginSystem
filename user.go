@@ -1,6 +1,8 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // 帳密
 type Users []User
@@ -51,5 +53,15 @@ func (u *Users) Change(o User, n User) bool {
 		return true
 	}
 
+	return false
+}
+
+func (u Users) Login(n User) bool {
+	for _, v := range u {
+		// TODO: 加密機制
+		if v.Account == n.Account && v.Password == n.Password {
+			return true
+		}
+	}
 	return false
 }
