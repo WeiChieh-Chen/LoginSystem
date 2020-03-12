@@ -15,56 +15,64 @@
 <body>
 <v-app id="app">
     <v-container>
-        <v-row>
+        <v-col>
             <v-alert dense type="success" v-show="alert == 1">登入成功</v-alert>
             <v-alert dense type="error" v-show="alert == 2">請確認密碼無誤</v-alert>
             <v-alert dense type="success" v-show="alert == 3">新會員註冊成功</v-alert>
             <v-alert dense type="error" v-show="alert == 4">帳號已被使用</v-alert>
             <v-alert dense type="info" v-show="alert == 5">密碼已修改</v-alert>
-        </v-row>
+        </v-col>
         <v-row align="center">
-            <v-form>
-                <v-row>
-                    <v-text-field label="Account" name="account" v-model="account" required></v-text-field>
-                </v-row>
-                <v-row>
-                    <v-text-field label="Password" type="password" name="password" v-model="password"></v-text-field>
-                </v-row>
-                <v-row>
-                    <v-btn outlined color="success" @click="submit">submit</v-btn>
-                    <v-btn outlined color="primary" @click="register">register</v-btn>
-                </v-row>
-            </v-form>
-            <v-row justify="space-around">
-                Result: <br>
-                {{ result }}
-            </v-row>
+            <v-col>
+                <v-form>
+                    <v-row>
+                        <v-text-field label="Account" name="account" v-model="account" required></v-text-field>
+                    </v-row>
+                    <v-row>
+                        <v-text-field label="Password" type="password" name="password"
+                                      v-model="password"></v-text-field>
+                    </v-row>
+                    <v-row justify="end">
+                        <v-btn outlined color="success" @click="submit">submit</v-btn>
+                        <v-btn outlined color="primary" @click="register">register</v-btn>
+                    </v-row>
+                </v-form>
+            </v-col>
+            <v-col>
+                <v-card class="mx-auto" max-width="500">
+                    <v-list dense>
+                        <v-subheader>User List</v-subheader>
+                        <v-list-item-group v-model="user" color="primary">
+                            <v-list-item v-for="(user, i) in users" :key="i">
+                                <v-list-item-icon>
+                                    <v-icon>mdi-account</v-icon>
+                                </v-list-item-icon>
+                                <v-list-item-content>
+                                    <v-list-item-title v-text="user.Account"></v-list-item-title>
+                                </v-list-item-content>
+                                <v-list-item-action>
+                                    <v-btn icon @click="change(user)">
+                                        <v-icon color="orange lighten-1">mdi-pencil</v-icon>
+                                    </v-btn>
+                                </v-list-item-action>
+                                <v-list-item-action>
+                                    <v-btn icon @click="remove(user)">
+                                        <v-icon color="error lighten-1">mdi-close</v-icon>
+                                    </v-btn>
+                                </v-list-item-action>
+                            </v-list-item>
+                        </v-list-item-group>
+                    </v-list>
+                </v-card>
+            </v-col>
         </v-row>
-        <v-card class="mx-auto" max-width="500">
-            <v-list dense>
-                <v-subheader>User List</v-subheader>
-                <v-list-item-group v-model="user" color="primary">
-                    <v-list-item v-for="(user, i) in users" :key="i">
-                        <v-list-item-icon>
-                            <v-icon>mdi-account</v-icon>
-                        </v-list-item-icon>
-                        <v-list-item-content>
-                            <v-list-item-title v-text="user.Account"></v-list-item-title>
-                        </v-list-item-content>
-                        <v-list-item-action>
-                            <v-btn icon @click="change(user)">
-                                <v-icon color="orange lighten-1">mdi-pencil</v-icon>
-                            </v-btn>
-                        </v-list-item-action>
-                        <v-list-item-action>
-                            <v-btn icon @click="remove(user)">
-                                <v-icon color="error lighten-1">mdi-close</v-icon>
-                            </v-btn>
-                        </v-list-item-action>
-                    </v-list-item>
-                </v-list-item-group>
-            </v-list>
-        </v-card>
+        <v-col>
+            <v-row justify="space-around" style="background-color:ghostwhite; border-radius: 10px;">
+                <div><p class="font-weight-black">Result:</p>
+                    {{ result }}
+                </div>
+            </v-row>
+        </v-col>
     </v-container>
 </v-app>
 </body>
