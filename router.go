@@ -49,10 +49,21 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Path == "/v1/user/pwd/change" {
-		res.Result.IsOK = true
+		newUser := User{
+			Account:  user.Account,
+			Password: user.Password,
+		}
+
+		if UserList.Change(user, newUser) {
+			res.Result.IsOK = true
+		} else {
+			res.Result.IsOK = false
+		}
+
 		if err := json.NewEncoder(w).Encode(res); err != nil {
 			return
 		}
+
 		return
 	}
 

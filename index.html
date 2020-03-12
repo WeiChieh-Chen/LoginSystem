@@ -76,7 +76,13 @@
                 })
             },
             change() {
-
+                let para = {
+                    account: this.account,
+                    password: this.password,
+                };
+                axios.post(DOMAIN + "/v1/user/pwd/change", para).then(res => {
+                    this.result = res.data;
+                })
             }
         }
     })

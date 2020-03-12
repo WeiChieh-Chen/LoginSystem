@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 // 帳密
 type Users []User
 type User struct {
@@ -35,6 +37,17 @@ func (u *Users) Remove(n User) bool {
 
 		// 然後直接把最後一筆刪除
 		*u = (*u)[:last]
+		return true
+	}
+
+	return false
+}
+
+func (u *Users) Change(o User, n User) bool {
+	i := u.exist(o)
+	fmt.Print(i)
+	if i >= 0 {
+		(*u)[i] = n
 		return true
 	}
 
