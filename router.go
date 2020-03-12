@@ -21,28 +21,18 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	_ = json.NewDecoder(r.Body).Decode(&user)
 
 	if r.URL.Path == "/v1/user/create" {
-		if UserList.Add(user) {
-			res.Result.IsOK = true
-		} else {
-			res.Result.IsOK = false
-		}
 
-		if err := json.NewEncoder(w).Encode(res); err != nil {
-			return
-		}
+		res.Result.IsOK = UserList.Add(user)
+
+		_ = json.NewEncoder(w).Encode(res)
 		return
 	}
 
 	if r.URL.Path == "/v1/user/delete" {
-		if UserList.Remove(user) {
-			res.Result.IsOK = true
-		} else {
-			res.Result.IsOK = false
-		}
 
-		if err := json.NewEncoder(w).Encode(res); err != nil {
-			return
-		}
+		res.Result.IsOK = UserList.Remove(user)
+
+		_ = json.NewEncoder(w).Encode(res)
 		return
 	}
 
@@ -52,15 +42,9 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			Password: user.Password,
 		}
 
-		if UserList.Change(user, newUser) {
-			res.Result.IsOK = true
-		} else {
-			res.Result.IsOK = false
-		}
+		res.Result.IsOK = UserList.Change(user, newUser)
 
-		if err := json.NewEncoder(w).Encode(res); err != nil {
-			return
-		}
+		_ = json.NewEncoder(w).Encode(res)
 
 		return
 	}
@@ -72,9 +56,7 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			w.WriteHeader(400)
 		}
 
-		if err := json.NewEncoder(w).Encode(res); err != nil {
-			return
-		}
+		_ = json.NewEncoder(w).Encode(res)
 		return
 	}
 

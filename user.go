@@ -1,9 +1,5 @@
 package main
 
-import (
-	"fmt"
-)
-
 // 帳密
 type Users []User
 type User struct {
@@ -11,55 +7,54 @@ type User struct {
 	Password string `json:"Password"`
 }
 
-func (u Users) exist(n User) int {
-	for k, v := range u {
-		if v.Account == n.Account {
+func (us Users) exist(u User) int {
+	for k, v := range us {
+		if v.Account == u.Account {
 			return k
 		}
 	}
 	return -1
 }
 
-func (u *Users) Add(n User) bool {
-	if u.exist(n) < 0 {
-		*u = append(*u, n)
+func (us *Users) Add(u User) bool {
+	if us.exist(u) < 0 {
+		*us = append(*us, u)
 		return true
 	}
 
 	return false
 }
 
-func (u *Users) Remove(n User) bool {
-	i := u.exist(n)
+func (us *Users) Remove(u User) bool {
+	i := us.exist(u)
 
 	if i >= 0 {
-		last := len(*u) - 1
+		last := len(*us) - 1
 		// 先將刪除的元素為最後一筆
-		(*u)[i] = (*u)[last]
+		(*us)[i] = (*us)[last]
 
 		// 然後直接把最後一筆刪除
-		*u = (*u)[:last]
+		*us = (*us)[:last]
 		return true
 	}
 
 	return false
 }
 
-func (u *Users) Change(o User, n User) bool {
-	i := u.exist(o)
-	fmt.Print(i)
+func (us *Users) Change(o User, n User) bool {
+	i := us.exist(o)
 	if i >= 0 {
-		(*u)[i] = n
+		(*us)[i] = n
 		return true
 	}
 
 	return false
 }
 
-func (u Users) Login(n User) bool {
-	for _, v := range u {
+func (us Users) Login(u User) bool {
+	for _, v := range us {
 		// TODO: 加密機制
-		if v.Account == n.Account && v.Password == n.Password {
+		if v.Account == u.Account && v.Password == u.Password {
 			return true
 		}
 	}
