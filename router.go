@@ -22,7 +22,9 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	if r.URL.Path == "/v1/user/create" {
 
-		res.Result.IsOK = UserList.Add(user)
+		if user.Account != "" {
+			res.Result.IsOK = UserList.Add(user)
+		}
 
 		_ = json.NewEncoder(w).Encode(res)
 		return
@@ -50,6 +52,12 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.URL.Path == "/v1/user/login" {
+		vars := r.URL.Query()
+		user := User{
+			Account:  vars.Get("account"),
+			Password: vars.Get("password"),
+		}
+
 		if !UserList.Login(user) {
 			res.Code = 2
 			res.Message = "Login Failed"
@@ -57,6 +65,11 @@ func (*AuthMux) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 
 		_ = json.NewEncoder(w).Encode(res)
+		return
+	}
+
+	if r.URL.Path == "/v1/users" {
+		_ = json.NewEncoder(w).Encode(UserList)
 		return
 	}
 
